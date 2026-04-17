@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">zvonilka</string>
+    <string name="status_on">Защита включена</string>
+    <string name="status_off">Защита выключена</string>
+    <string name="hint_tap">Нажми, чтобы включить</string>
+    <string name="hint_active">Все незнакомые номера блокируются</string>
+    <string name="toggle_cd">Включить или выключить блокировку</string>
+    <string name="channel_name">Заблокированные звонки</string>
+    <string name="channel_desc">Уведомления о заблокированных незнакомых номерах</string>
+    <string name="notif_title">Звонок заблокирован</string>
+    <string name="notif_text">Неизвестный номер: %1$s</string>
+    <string name="notif_unknown">скрытый номер</string>
+</resources>

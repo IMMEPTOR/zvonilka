@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#07090F</color>
+    <color name="bg_secondary">#0E1220</color>
+    <color name="fg">#F1F3FF</color>
+    <color name="fg_dim">#7C82A0</color>
+    <color name="accent_on">#26E5A8</color>
+    <color name="accent_off">#2A2F47</color>
+    <color name="accent_glow">#1AFFB87A</color>
+    <color name="ic_launcher_background">#07090F</color>
+</resources>
