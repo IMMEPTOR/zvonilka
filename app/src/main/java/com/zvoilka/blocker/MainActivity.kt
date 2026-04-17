@@ -12,7 +12,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,14 +22,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toggleButton: ImageButton
     private lateinit var statusText: TextView
     private lateinit var hintText: TextView
+    private lateinit var langRu: TextView
+    private lateinit var langEn: TextView
 
     private val roleLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        val roleHeld = isCallScreeningRoleHeld()
-        if (!roleHeld) {
+        if (!isCallScreeningRoleHeld()) {
             prefs.enabled = false
-            Toast.makeText(this, "Нужно назначить zvonilka как приложение для фильтрации звонков", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.toast_role_required, Toast.LENGTH_LONG).show()
         }
         updateUi()
     }
@@ -41,12 +44,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (AppCompatDelegate.getApplicationLocales().isEmpty) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(DEFAULT_LANG))
+        }
+
         setContentView(R.layout.activity_main)
 
         prefs = BlockerPrefs(this)
         toggleButton = findViewById(R.id.toggle_button)
         statusText = findViewById(R.id.status_text)
         hintText = findViewById(R.id.hint_text)
+        langRu = findViewById(R.id.lang_ru)
+        langEn = findViewById(R.id.lang_en)
 
         ensureNotificationChannel(this)
 
@@ -60,6 +70,10 @@ class MainActivity : AppCompatActivity() {
             updateUi()
         }
 
+        langRu.setOnClickListener { setLanguage(LANG_RU) }
+        langEn.setOnClickListener { setLanguage(LANG_EN) }
+
+        updateLangUi()
         updateUi()
     }
 
@@ -68,7 +82,35 @@ class MainActivity : AppCompatActivity() {
         if (prefs.enabled && !isCallScreeningRoleHeld()) {
             prefs.enabled = false
         }
+        updateLangUi()
         updateUi()
+    }
+
+    private fun setLanguage(tag: String) {
+        if (currentLanguage() == tag) return
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+    }
+
+    private fun currentLanguage(): String {
+        val locales = AppCompatDelegate.getApplicationLocales()
+        val tag = if (locales.isEmpty) DEFAULT_LANG else locales[0]?.language ?: DEFAULT_LANG
+        return if (tag.startsWith(LANG_EN)) LANG_EN else LANG_RU
+    }
+
+    private fun updateLangUi() {
+        val lang = currentLanguage()
+        stylePill(langRu, lang == LANG_RU)
+        stylePill(langEn, lang == LANG_EN)
+    }
+
+    private fun stylePill(view: TextView, active: Boolean) {
+        if (active) {
+            view.setBackgroundResource(R.drawable.bg_segment_active)
+            view.setTextColor(ContextCompat.getColor(this, R.color.bg))
+        } else {
+            view.setBackgroundResource(0)
+            view.setTextColor(ContextCompat.getColor(this, R.color.fg_dim))
+        }
     }
 
     private fun requestRequiredPermissions() {
@@ -98,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         val rm = getSystemService(Context.ROLE_SERVICE) as? RoleManager ?: return
         if (rm.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) return
         if (!rm.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING)) {
-            Toast.makeText(this, "Эта версия Android не поддерживает фильтрацию звонков", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.toast_unsupported, Toast.LENGTH_LONG).show()
             return
         }
         val intent = rm.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)
@@ -114,6 +156,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val CHANNEL_ID = "blocked_calls"
+        private const val LANG_RU = "ru"
+        private const val LANG_EN = "en"
+        private const val DEFAULT_LANG = LANG_RU
 
         fun ensureNotificationChannel(ctx: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

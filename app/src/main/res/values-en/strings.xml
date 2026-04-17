@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">zvonilka</string>
+    <string name="subtitle">Block calls from unknown numbers</string>
+    <string name="status_on">Protection enabled</string>
+    <string name="status_off">Protection disabled</string>
+    <string name="hint_tap">Tap to enable</string>
+    <string name="hint_active">All unknown numbers are being blocked</string>
+    <string name="toggle_cd">Toggle call blocking</string>
+    <string name="channel_name">Blocked calls</string>
+    <string name="channel_desc">Notifications about blocked unknown numbers</string>
+    <string name="notif_title">Call blocked</string>
+    <string name="notif_text">Unknown number: %1$s</string>
+    <string name="notif_unknown">private number</string>
+    <string name="lang_ru_label">РУС</string>
+    <string name="lang_en_label">ENG</string>
+    <string name="lang_cd">Interface language</string>
+    <string name="toast_role_required">Set zvonilka as the default call screening app</string>
+    <string name="toast_unsupported">This Android version does not support call screening</string>
+</resources>
